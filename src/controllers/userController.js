@@ -1,6 +1,7 @@
 import userModel from "../models/User.js";
 import { generateAccessToken } from "../services/generateAccessToken.service.js";
 import { error, success } from "../utills/responseWrapper.utill.js";
+import { generateUniqueReferralCode } from "../services/generateReferalCode.js";
 
 export async function guestLoginController(req,res){
     try{
@@ -10,16 +11,17 @@ export async function guestLoginController(req,res){
         }
 
         const existingUser = await userModel.findOne({deviceID});
+        const referralCode =  generateUniqueReferralCode();
         // if user not present
         if(!existingUser){
-            const newUser = new userModel({deviceID});
+            const newUser = new userModel({deviceID,referralCode});
             const createdUser = await newUser.save();
             const accessToken = generateAccessToken({...createdUser});
             return res.send(success(200,{accessToken}));
         }
            // if user already present
-           //const accessToken = generateAccessToken({...existingUser});
-           return res.send(success(200,));
+           const accessToken = generateAccessToken({...existingUser});
+           return res.send(success(200,accessToken));
 
     }catch (err) {
         return res.send(error(500,err.message));
@@ -34,11 +36,11 @@ export async function authenticLoginController(req, res) {
 
         // Find existing user with the same deviceID
         let existingUser = await userModel.findOne({ email});
-
+        const referralCode =  generateUniqueReferralCode();
         // Check if user with same deviceID but different email exists
         if (existingUser && existingUser.email !== email) {
             // Create new user with the provided email
-            const newUser = new userModel({ deviceID, name, email, profileURL });
+            const newUser = new userModel({ deviceID, name, email, profileURL,referralCode });
             const createdUser = await newUser.save();
             const accessToken = generateAccessToken({ ...createdUser });
             return res.send(success(200, { accessToken,isNewUser: true }));
@@ -46,7 +48,7 @@ export async function authenticLoginController(req, res) {
 
         // If user not present or user with same deviceID and email exists, update existing user
         if (!existingUser) {
-            const newUser = new userModel({ deviceID, name, email, profileURL });
+            const newUser = new userModel({ deviceID, name, email, profileURL,referralCode });
             const createdUser = await newUser.save();
             const accessToken = generateAccessToken({ ...createdUser });
             return res.send(success(200, { accessToken,isNewUser: true }));
@@ -54,6 +56,7 @@ export async function authenticLoginController(req, res) {
             existingUser.name = name;
             existingUser.email = email;
             existingUser.profileURL = profileURL;
+            existingUser. referralCode= referralCode;
             existingUser = await existingUser.save();
         
 
@@ -101,6 +104,30 @@ export async function userUpdateController(req,res){
         return res.send(error(500,err.message));
     }
 }
+export async function referAndEarnController(req,res){
 
+    const currUser = req._id;
+   
+    const{referralCode} = req.body;
+    try {
+        const refferer = await userModel.findOne({referralCode}); 
+        
+        if(!refferer){
+            return res.send(error(404,"refferer user not found"));
+        } 
+        const reffered = await userModel.findById({_id:currUser});
+        if(!reffered){
+            return res.send(error(404,"referred user not found"));
+        }
+        refferer.coins+=20;
+        await refferer.save();
+        reffered.coins+=10;
+        await reffered.save();
+     return res.send(success(200,"you have earn 10 coins by referal successfully "));
+        
+    } catch (err) {
+        return res.send(error(500,err.message));
+    }
+}
 
 
