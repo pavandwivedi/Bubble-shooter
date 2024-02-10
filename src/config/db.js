@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv"
+dotenv.config();
 
-const mongoURL = 'mongodb://127.0.0.1:27017/BubbleShooter';
+
 
 export default async function connectDB(){
     try {
-        const connect =  await mongoose.connect(mongoURL);
+        const connect =  await mongoose.connect(process.env.mongoURL);
         console.log('DB connected! '+connect.connection.host);
     } catch (error) {
         console.log(error);

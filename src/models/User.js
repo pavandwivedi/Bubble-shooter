@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const userSchema = mongoose.Schema({
     deviceID:{
         type:String,
-        required:true,
-        unique:true
+        required:true
+       
     },
     name:{
         type:String,
@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
     email:{
         type:String,
         // required:true,
-        // unique:true
+         unique:true
     },
     profileURL:{
         type:String,

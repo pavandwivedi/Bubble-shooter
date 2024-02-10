@@ -18,42 +18,53 @@ export async function guestLoginController(req,res){
             return res.send(success(200,{accessToken}));
         }
            // if user already present
-           const accessToken = generateAccessToken({...existingUser});
-           return res.send(success(200,{accessToken}));
+           //const accessToken = generateAccessToken({...existingUser});
+           return res.send(success(200,));
 
     }catch (err) {
         return res.send(error(500,err.message));
     }
 }
-export async function authenticLoginController(req,res){
+export async function authenticLoginController(req, res) {
     try {
-        const {deviceID,name,email,profileURL} = req.body;
-        if(!name || !email ||!deviceID){
-            return res.send(error(422,"insufficient data"));
+        const { deviceID, name, email, profileURL } = req.body;
+        if (!name || !email || !deviceID) {
+            return res.send(error(422, "insufficient data"));
         }
 
-        const existingUser =  await userModel.findOne({deviceID});
+        // Find existing user with the same deviceID
+        let existingUser = await userModel.findOne({ email});
 
-        // if user not present create new user
-        if(!existingUser){
-            const newUser = new userModel({deviceID,name,email,profileURL});
+        // Check if user with same deviceID but different email exists
+        if (existingUser && existingUser.email !== email) {
+            // Create new user with the provided email
+            const newUser = new userModel({ deviceID, name, email, profileURL });
             const createdUser = await newUser.save();
-            const accessToken = generateAccessToken({...createdUser});
-            return res.send(success(200,{accessToken}));
+            const accessToken = generateAccessToken({ ...createdUser });
+            return res.send(success(200, { accessToken,isNewUser: true }));
         }
 
-        //  if user already present
-        existingUser.name = name;
-        existingUser.email = email;
-        existingUser.profileURL = profileURL;
-        await existingUser.save();
-        const accessToken = generateAccessToken({...existingUser});
-        return res.send(success(200,{accessToken}));
-       
-    }catch (err){
-        return res.send(error(500,err.message));
+        // If user not present or user with same deviceID and email exists, update existing user
+        if (!existingUser) {
+            const newUser = new userModel({ deviceID, name, email, profileURL });
+            const createdUser = await newUser.save();
+            const accessToken = generateAccessToken({ ...createdUser });
+            return res.send(success(200, { accessToken,isNewUser: true }));
+        } 
+            existingUser.name = name;
+            existingUser.email = email;
+            existingUser.profileURL = profileURL;
+            existingUser = await existingUser.save();
+        
+
+        const accessToken = generateAccessToken({ ...existingUser });
+        return res.send(success(200, { accessToken,isNewUser:false }));
+
+    } catch (err) {
+        return res.send(error(500, err.message));
     }
 }
+
 
 export async function getUserController(req,res){
     try {

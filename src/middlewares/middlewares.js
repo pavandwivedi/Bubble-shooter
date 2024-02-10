@@ -4,7 +4,7 @@ import Jwt from 'jsonwebtoken';
 import { error } from "../utills/responseWrapper.utill.js"
 
 
-const secret_Key = "greenwebsolutions";
+const secretKey = "greenwebsolutions";
 
 export async function checkUserLogin(req,res,next){
     try {
