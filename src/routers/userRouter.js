@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticLoginController, getUserController, guestLoginController } from '../controllers/userController.js';
+import { authenticLoginController, getUserController, guestLoginController, userUpdateController } from '../controllers/userController.js';
 import { checkUserLogin } from '../middlewares/middlewares.js';
 
 const userRouter = express.Router();
@@ -7,5 +7,6 @@ const userRouter = express.Router();
 userRouter.post('/authLogin',authenticLoginController);
 userRouter.post('/guestLogin',guestLoginController);
 userRouter.get('/get',checkUserLogin , getUserController);
+userRouter.put('/update',checkUserLogin,userUpdateController);
 
 export default userRouter;

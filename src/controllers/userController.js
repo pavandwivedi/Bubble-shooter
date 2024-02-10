@@ -80,5 +80,27 @@ export async function getUserController(req,res){
     }
 }
 
+export async function userUpdateController(req,res){
+    
+    try {
+        const userId = req._id;
+        const{coins,life,extraball,fireball,colorball} = req.body;
+
+        const user = await userModel.findById(userId);
+
+        user.coins+= coins || 0;
+        user.life += life || 0;
+        user.extraball += extraball || 0;
+        user.fireball += fireball || 0;
+        user.colorball+= colorball || 0;
+
+        await user.save();
+        return res.send(success(200,user));
+
+    } catch (err) {
+        return res.send(error(500,err.message));
+    }
+}
+
 
 
