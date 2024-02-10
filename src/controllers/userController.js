@@ -130,4 +130,37 @@ export async function referAndEarnController(req,res){
     }
 }
 
+export async function userShopController(req,res){
+    try {
+        const {coins} = req.body;
+        const userId = req._id;
+        const  user = await userModel.findById({_id:userId});
+        if (coins==50){
+            user.life+=1;
+            user.coins-=50;
+        }
+        if(coins==150){
+            user.colorball+=5;
+            user.coins-=150;
+        }
+        if(coins==140){
+            user.extraball+=3;
+            user.coins-=140;
+        }
+        if(coins==180){
+            user.life+=4;
+            user.coins-=180;
+        }
+        if(coins==250){
+            user.fireball+=5;
+            user.coins-=250;
+        }
+
+        await user.save();
+        return res.send(success(200,user));
+    } catch (err) {
+        return res.send(error(500,err.message));
+    }
+}
+
 
