@@ -2,31 +2,29 @@ import userModel from "../models/User.js";
 import { generateAccessToken } from "../services/generateAccessToken.service.js";
 import { error, success } from "../utills/responseWrapper.utill.js";
 import { generateUniqueReferralCode } from "../services/generateReferalCode.js";
-
-export async function guestLoginController(req,res){
-    try{
-        const {deviceID} = req.body;
-        if(!deviceID){
-            return res.send(error(422,"insufficient data"));
+export async function guestLoginController(req, res) {
+    try {
+        const { deviceID } = req.body;
+        if (!deviceID) {
+            return res.send(error(422, "insufficient data"));
         }
 
-        const existingUser = await userModel.findOne({deviceID});
-        const referralCode =  generateUniqueReferralCode();
+        let existingUser = await userModel.findOne({ deviceID });
+
         // if user not present
-        if(!existingUser){
-            const newUser = new userModel({deviceID,referralCode});
-            const createdUser = await newUser.save();
-            const accessToken = generateAccessToken({...createdUser});
-            return res.send(success(200,{accessToken}));
+        if (!existingUser) {
+            const referralCode = generateUniqueReferralCode();
+            const newUser = new userModel({ deviceID, referralCode });
+            existingUser = await newUser.save();
         }
-           // if user already present
-           const accessToken = generateAccessToken({...existingUser});
-           return res.send(success(200,accessToken));
 
-    }catch (err) {
-        return res.send(error(500,err.message));
+        const accessToken = generateAccessToken({ ...existingUser });
+        return res.send(success(200, { accessToken }));
+    } catch (err) {
+        return res.send(error(500, err.message));
     }
 }
+
 export async function authenticLoginController(req, res) {
     try {
         const { deviceID, name, email, profileURL } = req.body;
@@ -34,39 +32,34 @@ export async function authenticLoginController(req, res) {
             return res.send(error(422, "insufficient data"));
         }
 
-        // Find existing user with the same deviceID
-        let existingUser = await userModel.findOne({ email});
-        const referralCode =  generateUniqueReferralCode();
-        // Check if user with same deviceID but different email exists
-        if (existingUser && existingUser.email !== email) {
-            // Create new user with the provided email
-            const newUser = new userModel({ deviceID, name, email, profileURL,referralCode });
-            const createdUser = await newUser.save();
-            const accessToken = generateAccessToken({ ...createdUser });
-            return res.send(success(200, { accessToken,isNewUser: true }));
-        }
+        // Find existing user with the same email
+        let existingUser = await userModel.findOne({ email });
+        let isNewUser = false; // Flag to indicate if the user is new
 
-        // If user not present or user with same deviceID and email exists, update existing user
+        // If user not present or user with same email exists, create/update user
         if (!existingUser) {
-            const newUser = new userModel({ deviceID, name, email, profileURL,referralCode });
-            const createdUser = await newUser.save();
-            const accessToken = generateAccessToken({ ...createdUser });
-            return res.send(success(200, { accessToken,isNewUser: true }));
-        } 
+            // Generate referral code only for new users
+            const referralCode = generateUniqueReferralCode();
+            const newUser = new userModel({ deviceID, name, email, profileURL, referralCode });
+            existingUser = await newUser.save();
+            isNewUser = true; // Set flag to true as it's a new user
+        } else {
+            // Update existing user's information
+            existingUser.deviceID = deviceID;
             existingUser.name = name;
             existingUser.email = email;
             existingUser.profileURL = profileURL;
-            existingUser. referralCode= referralCode;
             existingUser = await existingUser.save();
-        
+        }
 
         const accessToken = generateAccessToken({ ...existingUser });
-        return res.send(success(200, { accessToken,isNewUser:false }));
+        return res.send(success(200, { accessToken, isNewUser }));
 
     } catch (err) {
         return res.send(error(500, err.message));
     }
 }
+
 
 
 export async function getUserController(req,res){

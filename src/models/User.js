@@ -8,15 +8,16 @@ const userSchema = mongoose.Schema({
     },
     name:{
         type:String,
-        // required:true
+        
     },
     referralCode:{
         type:String,
+        unique:true
+        
      
     },
     email:{
         type:String,
-        // required:true,
          unique:true
     },
     profileURL:{
