@@ -105,29 +105,44 @@ export async function userUpdateController(req, res) {
     }
 }
 
-export async function referAndEarnController(req,res){
-
+export async function referAndEarnController(req, res) {
     const currUser = req._id;
-   
-    const{referralCode} = req.body;
+    const { referralCode } = req.body;
     try {
-        const refferer = await userModel.findOne({referralCode}); 
-        
-        if(!refferer){
-            return res.send(error(404,"refferer user not found"));
-        } 
-        const reffered = await userModel.findById({_id:currUser});
-        if(!reffered){
-            return res.send(error(404,"referred user not found"));
+        const referrer = await userModel.findOne({ referralCode });
+
+        if (!referrer) {
+            return res.send(error(404, "referrer user not found"));
         }
-        refferer.coins+=20;
-        await refferer.save();
-        reffered.coins+=10;
-        await reffered.save();
-     return res.send(success(200,"you have earn 10 coins by referal successfully "));
-        
+
+        const referred = await userModel.findById(currUser);
+
+        if (!referred) {
+            return res.send(error(404, "referred user not found"));
+        }
+
+        // Store the original referral code of both referrer and referred
+        const originalReferralCodeReferrer = referrer.referralCode;
+        const originalReferralCodeReferred = referred.referralCode;
+
+        // Perform the referral and earn operations
+        referrer.coins += 20;
+        await referrer.save();
+
+        referred.coins += 10;
+        await referred.save();
+
+        // Restore the original referral codes
+        referrer.referralCode = originalReferralCodeReferrer;
+        await referrer.save();
+
+        referred.referralCode = originalReferralCodeReferred;
+        await referred.save();
+
+        return res.send(success(200, "You have earned 10 coins by referral successfully"));
+
     } catch (err) {
-        return res.send(error(500,err.message));
+        return res.send(error(500, err.message));
     }
 }
 
@@ -136,6 +151,7 @@ export async function userShopController(req,res){
         const {coins} = req.body;
         const userId = req._id;
         const  user = await userModel.findById({_id:userId});
+        const originalReferralCode = user.referralCode;
         if (coins==50){
             user.life+=1;
             user.coins-=50;
@@ -158,6 +174,7 @@ export async function userShopController(req,res){
         }
 
         await user.save();
+        user.referralCode = originalReferralCode;
         return res.send(success(200,user));
     } catch (err) {
         return res.send(error(500,err.message));
