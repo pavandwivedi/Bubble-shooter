@@ -15,11 +15,13 @@ export async function guestLoginController(req, res) {
         if (!existingUser) {
             const referralCode = generateUniqueReferralCode();
             const newUser = new userModel({ deviceID, referralCode });
-            existingUser = await newUser.save();
+            await newUser.save();
+            const accessToken = generateAccessToken({ ...newUser })
+            return res.send(success(200,accessToken,{isNewUser:true}))
         }
 
         const accessToken = generateAccessToken({ ...existingUser });
-        return res.send(success(200, { accessToken }));
+        return res.send(success(200,  accessToken ,{isNewuser:false}));
     } catch (err) {
         return res.send(error(500, err.message));
     }
