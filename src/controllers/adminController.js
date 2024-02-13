@@ -1,7 +1,5 @@
 import adminModel from "../models/Admin.js";
-import userModel from "../models/User.js";
-import bcrypt from 'bcrypt'
-import Jwt from 'jsonwebtoken'
+import {userModel} from "../models/User.js";
 import dotenv from 'dotenv'
 import { generateAccessToken } from "../services/generateAccessToken.service.js";
 dotenv.config();

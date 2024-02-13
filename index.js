@@ -5,7 +5,7 @@ import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 import  passport  from "passport";
 import morgan from "morgan";
 import cors from "cors";
-import authRouter from "./src/routers/authRouter.js";
+//import authRouter from "./src/routers/authRouter.js";
 import levelRouter from "./src/routers/levelRouter.js";
 import dotenv from 'dotenv';
 import userRouter from "./src/routers/userRouter.js";
@@ -46,7 +46,7 @@ passport.deserializeUser(function(obj, cb){ cb(null, obj);});
 
 // routes
 app.get('/',(req,res)=>{res.render('auth')})
-app.use('/auth',authRouter);
+//app.use('/auth',authRouter);
 app.use('/level',levelRouter);
 app.use('/user',userRouter);
 app.use('/admin',adminRouter);
