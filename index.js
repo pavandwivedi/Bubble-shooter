@@ -10,6 +10,7 @@ import levelRouter from "./src/routers/levelRouter.js";
 import dotenv from 'dotenv';
 import userRouter from "./src/routers/userRouter.js";
 import adminRouter from "./src/routers/adminRouter.js";
+import versionRouter from "./src/routers/versionRouter.js";
 dotenv.config();
 
 const app = express();
@@ -50,6 +51,7 @@ app.get('/',(req,res)=>{res.render('auth')})
 app.use('/level',levelRouter);
 app.use('/user',userRouter);
 app.use('/admin',adminRouter);
+app.use('/version',versionRouter);
 
 app.listen(port,()=>
     {
