@@ -8,7 +8,7 @@ export async function insertVersionController(req, res) {
         let existingVersion = await versionModel.find({  });
         if (existingVersion.length === 1) {
             // If the version already exists, update it instead of creating a new one
-            existingVersion = await versionModel.findOneAndUpdate({ version }, { version }, { new: true });
+            existingVersion = await versionModel.findOneAndUpdate({version:existingVersion[0].version},{version});
             console.log(existingVersion);
             return res.send(success(200, "Version updated successfully"));
         }
