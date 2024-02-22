@@ -8,7 +8,7 @@ export  async function postLevelController(req,res){
     try {
         const {level,score} = req.body;
         const user = req._id;
-        if(!level || !coins)
+        if(!level || !score)
         return res.send(error(404,"all fields are required"));
     
         const isLevelExist = await levelModel.findOne({$and:[{level},{user}]});
