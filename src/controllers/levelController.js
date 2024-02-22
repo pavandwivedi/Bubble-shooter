@@ -1,30 +1,31 @@
 import levelModel from "../models/Level.js";
 import {userModel} from "../models/User.js";
+import {error,success} from "../utills/responseWrapper.utill.js"
 
 
 
 export  async function postLevelController(req,res){
     try {
-        const {level,status,coins} = req.body;
+        const {level,score} = req.body;
         const user = req._id;
-        if(!level || !status || !coins)
-        return res.status(statuscode.BAD_REQUEST).send("missing fields!");
+        if(!level || !coins)
+        return res.send(error(404,"all fields are required"));
     
         const isLevelExist = await levelModel.findOne({$and:[{level},{user}]});
         if(isLevelExist){
-            return res.send("Level already exists");
+            return res.send(error(409,"Level already exists"));
         }
-        const levelInfo = new levelModel({level,status,coins,user});
+        const levelInfo = new levelModel({level,score,user});
         const createdLevel = await levelInfo.save();
                 
         const currUser = await userModel.findById(user);
         currUser.Levels.push(createdLevel._id);
         await currUser.save();
 
-        res.send(createdLevel);
+        res.send(success(200,createdLevel));
 
-    } catch (error) {
-        return res.send(error.message);
+    } catch (err) {
+        return res.send(error(500, err.message));
     }
 }
 
@@ -35,16 +36,16 @@ export  async function getLevelController(req,res){
         const user = req._id;
         const currUser = await userModel.findById(user);
         if(!currUser){
-            return res.send("user does not exist! ");
+            return res.send(error(404,"user does not exist! "));
         }
         const levelInfo = await levelModel.findOne({$and : [{"level":levelNo},{user}]}).populate('user');;
         if(!levelInfo){
-            return res.send("level info does not exist!");
+            return res.send(error(404,"level info does not exist!"));
         }
-        return res.send(levelInfo);
+        return res.send(success(200,levelInfo));
         
-    } catch (error) {
-        return res.send(error.message);
+    } catch (err) {
+        return res.send(error(500,err.message));
     }
 }
 export async function getAllLevelsController(req, res) {
@@ -53,40 +54,40 @@ export async function getAllLevelsController(req, res) {
       const currUser = await userModel.findById(user);
   
       if (!currUser) {
-        return res.send('User does not exist!');
+        return res.send(error(404,'User does not exist!'));
       }
   
       const allLevels = await levelModel.find({ user }).populate('user');;
   
       if (!allLevels || allLevels.length === 0) {
-        return res.send('No level information available!');
+        return res.send(error(404,'No level information available!'));
       }
   
-      return res.send(allLevels);
-    } catch (error) {
-      return res.send(error.message);
+      return res.send(success(200,allLevels));
+    } catch (err) {
+      return res.send(error(500,err.message));
     }
 }
 export  async function updateLevelController(req,res){
     try {
         const levelNo = req.params.levelNo;
         const user = req._id;
-        const {coins} = req.body;
+        const {score} = req.body;
         const levelInfo = await levelModel.findOne({$and : [{"level":levelNo},{user}]});
         if(!levelInfo){
-            return res.send("level info does not exist!");
+            return res.send(error(404,"level info does not exist!"));
         }
 
-        if(levelInfo["coins"]<coins){
-            levelInfo["coins"]=coins;
+        if(levelInfo["score"]<score){
+            levelInfo["score"]=score;
         }
 
         const savedLevel = await levelInfo.save();
-        return res.send(savedLevel);
+        return res.send(success(200,savedLevel));
 
 
-    } catch (error) {
-        console.log(error);
-        return res.send(error.message);
+    } catch (err) {
+       
+        return res.send(error(500,err.message));
     }
 }
