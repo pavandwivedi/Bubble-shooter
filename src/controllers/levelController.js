@@ -6,16 +6,16 @@ import {error,success} from "../utills/responseWrapper.utill.js"
 
 export  async function postLevelController(req,res){
     try {
-        const {level,score} = req.body;
+        const {level,score,star} = req.body;
         const user = req._id;
-        if(!level || !score)
+        if(!level || !score || !star)
         return res.send(error(404,"all fields are required"));
     
         const isLevelExist = await levelModel.findOne({$and:[{level},{user}]});
         if(isLevelExist){
             return res.send(error(409,"Level already exists"));
         }
-        const levelInfo = new levelModel({level,score,user});
+        const levelInfo = new levelModel({level,score,star,user});
         const createdLevel = await levelInfo.save();
                 
         const currUser = await userModel.findById(user);
@@ -73,6 +73,7 @@ export  async function updateLevelController(req,res){
         const levelNo = req.params.levelNo;
         const user = req._id;
         const {score} = req.body;
+        const {star} = req.body;
         const levelInfo = await levelModel.findOne({$and : [{"level":levelNo},{user}]});
         if(!levelInfo){
             return res.send(error(404,"level info does not exist!"));
@@ -80,6 +81,9 @@ export  async function updateLevelController(req,res){
 
         if(levelInfo["score"]<score){
             levelInfo["score"]=score;
+        }
+        if (levelInfo['star']<star){
+            levelInfo['star'] = star;
         }
 
         const savedLevel = await levelInfo.save();
