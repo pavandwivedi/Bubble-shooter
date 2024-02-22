@@ -38,7 +38,7 @@ export  async function getLevelController(req,res){
         if(!currUser){
             return res.send(error(404,"user does not exist! "));
         }
-        const levelInfo = await levelModel.findOne({$and : [{"level":levelNo},{user}]}).populate('user');;
+        const levelInfo = await levelModel.findOne({$and : [{"level":levelNo},{user}]});
         if(!levelInfo){
             return res.send(error(404,"level info does not exist!"));
         }
@@ -57,7 +57,7 @@ export async function getAllLevelsController(req, res) {
         return res.send(error(404,'User does not exist!'));
       }
   
-      const allLevels = await levelModel.find({ user }).populate('user');;
+      const allLevels = await levelModel.find({ user });
   
       if (!allLevels || allLevels.length === 0) {
         return res.send(error(404,'No level information available!'));
