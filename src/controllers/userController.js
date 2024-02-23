@@ -84,11 +84,18 @@ export async function facebookLoginController(req, res) {
             return res.send(error(422, "insufficient data"));
         }
     
+    
         // Find existing user with the same email
         const guestUser = await guestModel.findOne({ deviceID });
-        
-        const existingUser = await facebookModel.findOne({ $or: [{ phoneNo }, { facebookID }] });
+        var existingUser;
+        if(facebookID){
+             existingUser = await facebookModel.findOne({ facebookID });
+        }
+        else{
+            existingUser = await facebookModel.findOne({ phoneNo });
+        }
 
+        
         
         if (!existingUser) {
             

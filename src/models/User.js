@@ -42,7 +42,8 @@ const authSchema = new mongoose.Schema({
 const facebookSchema = new mongoose.Schema({
     facebookID:{
         type:String,
-        unique:true
+        unique:true,
+        // required:true
        
     },
     phoneNo:{
