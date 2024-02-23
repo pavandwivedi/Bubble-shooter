@@ -1,4 +1,4 @@
-import {userModel,guestModel,authModel} from "../models/User.js";
+import {userModel,guestModel,authModel, facebookModel} from "../models/User.js";
 import { generateAccessToken } from "../services/generateAccessToken.service.js";
 import { error, success } from "../utills/responseWrapper.utill.js";
 import { generateUniqueReferralCode } from "../services/generateReferalCode.js";
@@ -77,7 +77,59 @@ export async function authenticLoginController(req, res) {
         return res.send(error(500, err.message));
     }
 }
+export async function facebookLoginController(req, res) {
+    try {
+        const { facebookID, deviceID ,phoneNo} = req.body;
+        if (!facebookID && !phoneNo || !deviceID ) {
+            return res.send(error(422, "insufficient data"));
+        }
+    
+        // Find existing user with the same email
+        const guestUser = await guestModel.findOne({ deviceID });
+        
+        const existingUser = await facebookModel.findOne({ $or: [{ phoneNo }, { facebookID }] });
 
+        
+        if (!existingUser) {
+            
+            // Generate referral code only for new users
+            const referralCode = generateUniqueReferralCode();
+            const newUser = new facebookModel({  
+                referralCode, 
+                ...(phoneNo ? { phoneNo } : {}), 
+                ...(facebookID ? { facebookID } : {}) 
+            });
+            
+
+            // Transfer guest user data to authenticated user
+            if (guestUser) {
+                newUser.life = guestUser.life; // Assuming name is a field you want to transfer
+                newUser.coins = guestUser.coins;
+                newUser.extraball = guestUser.extraball;
+                newUser.fireball = guestUser.fireball;
+                newUser.colorball = guestUser.colorball;
+                newUser.levels = guestUser.levels;
+                 
+            }
+
+            await newUser.save();
+
+            // Delete guest user
+            if (guestUser) {
+                await guestModel.deleteOne({ _id: guestUser._id });
+            }
+
+            const accessToken = generateAccessToken({ ...newUser });
+            return res.send(success(200, { accessToken, isNewUser: true }));
+        } 
+
+        const accessToken = generateAccessToken({ ...existingUser });
+        return res.send(success(200, { accessToken, isNewUser: false }));
+
+    } catch (err) {
+        return res.send(error(500, err.message));
+    }
+}
 
 
 export async function getUserController(req,res){
