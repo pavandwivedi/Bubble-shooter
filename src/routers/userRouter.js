@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticLoginController, facebookLoginController, getUnlockLevels, getUserController, guestLoginController, referAndEarnController, userShopController, userUpdateController } from '../controllers/userController.js';
+import { authenticLoginController, facebookLoginController, getUnlockLevels, getUserController, guestLoginController, referAndEarnController, updateUserController, userShopController, userUpdateController } from '../controllers/userController.js';
 import { checkUserLogin } from '../middlewares/middlewares.js';
 
 const userRouter = express.Router();
@@ -12,4 +12,5 @@ userRouter.put('/update',checkUserLogin,userUpdateController);
 userRouter.post('/refer',checkUserLogin,referAndEarnController);
 userRouter.put('/shop',checkUserLogin,userShopController);
 userRouter.get("/unlockLevelCount",checkUserLogin,getUnlockLevels);
+userRouter.put('updateUser',checkUserLogin,updateUserController);
 export default userRouter;

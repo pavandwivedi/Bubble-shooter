@@ -211,18 +211,29 @@ export async function referAndEarnController(req, res) {
 
         // Restore the original referral codes
         referrer.referralCode = originalReferralCodeReferrer;
+        referrer.isReferred = true;
         await referrer.save();
 
         referred.referralCode = originalReferralCodeReferred;
         await referred.save();
 
-        return res.send(success(200, "You have earned 10 coins by referral successfully"));
+        return res.send(success(200, {isReferred:true}));
 
     } catch (err) {
         return res.send(error(500, err.message));
     }
 }
-
+export async function updateUserController (req,res){
+    try {
+        const userID = req._id;
+        const user = await userModel.findById(userID);
+        user.isReferred = false;
+        await user.save();
+        return res.send(success(200,"user updated successfully"))
+    } catch (err) {
+        return res.send(error(500,err.message));
+    }
+}
 export async function userShopController(req,res){
     try {
         const {coins} = req.body;

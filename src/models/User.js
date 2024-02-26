@@ -5,6 +5,11 @@ const commonSchema = new mongoose.Schema({
         type:String,
         unique:true
     },
+    isReferred:{
+        type:Boolean,
+        default:false
+    },
+   
     life:{type:Number,default:5},
     coins:{type:Number,default:0},
     extraball:{type:Number,default:0},
