@@ -143,11 +143,16 @@ export async function getUserController(req,res){
     try {
         console.log("get user called")
         const currUserId = req._id;
-        const user = await userModel.findOne({_id:currUserId}).populate('Levels');
+        const OriginalUser = await userModel.findOne({_id:currUserId}).populate('Levels');
+        // console.log(OriginalUser);
+        const user = OriginalUser;
         if(!user)
         return res.send("user not found!");
-
-        return res.send(user);
+    
+       res.send(user);
+       OriginalUser.referedCount = 0;
+       await OriginalUser.save();
+       return;
     } catch (error) {
         
     }
@@ -187,7 +192,6 @@ export async function referAndEarnController(req, res) {
     const { referralCode } = req.body;
     try {
         const referrer = await userModel.findOne({ referralCode });
-
         if (!referrer) {
             return res.send(error(404, "referrer user not found"));
         }
@@ -204,6 +208,8 @@ export async function referAndEarnController(req, res) {
 
         // Perform the referral and earn operations
         referrer.coins += 20;
+        // console.log(referrer);
+        referrer.referedCount++;
         await referrer.save();
 
         referred.coins += 10;
@@ -217,7 +223,7 @@ export async function referAndEarnController(req, res) {
         referred.referralCode = originalReferralCodeReferred;
         await referred.save();
 
-        return res.send(success(200, {isReferred:true,"coins":20}));
+        return res.send(success(200, {isReferred:true}));
 
     } catch (err) {
         return res.send(error(500, err.message));
@@ -279,5 +285,3 @@ export async function getUnlockLevels(req,res){
         return res.send(error(500,err.message));
     }
 }
-
-

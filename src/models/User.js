@@ -9,7 +9,7 @@ const commonSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
-   
+    referedCount:{type:Number,default:0},
     life:{type:Number,default:5},
     coins:{type:Number,default:0},
     extraball:{type:Number,default:0},
