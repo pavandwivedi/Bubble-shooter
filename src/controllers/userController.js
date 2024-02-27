@@ -217,7 +217,7 @@ export async function referAndEarnController(req, res) {
         referred.referralCode = originalReferralCodeReferred;
         await referred.save();
 
-        return res.send(success(200, {isReferred:true}));
+        return res.send(success(200, {isReferred:true,"coins":20}));
 
     } catch (err) {
         return res.send(error(500, err.message));
