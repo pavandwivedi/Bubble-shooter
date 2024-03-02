@@ -162,6 +162,7 @@ export async function userUpdateController(req, res) {
     try {
         const userId = req._id;
         const { coins, life, extraball, fireball, colorball } = req.body;
+      
 
         const user = await userModel.findById(userId);
 
