@@ -166,16 +166,11 @@ export async function userUpdateController(req, res) {
         const originalReferralCode = user.referralCode;
         const originalReferedCount = user.referedCount;
         // Update user's fields ensuring non-negativity
-        user.coins += coins >= 0 ? coins : 0;
-        user.life += life >= 0 ? life : 0;
-       
-            if (user.life  > 5) {
-                user.life = 5; // Set to maximum value of five lives
-            } 
-        
-        user.extraball += extraball >= 0 ? extraball : 0;
-        user.fireball += fireball >= 0 ? fireball : 0;
-        user.colorball += colorball >= 0 ? colorball : 0;
+        user.coins += coins || 0;
+        user.life += life || 0;
+        user.extraball += extraball || 0;
+        user.fireball += fireball || 0;
+        user.colorball += colorball || 0;
 
         // Save the user
         await user.save();
