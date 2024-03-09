@@ -159,19 +159,18 @@ export async function userUpdateController(req, res) {
     try {
         const userId = req._id;
         const { coins, life, extraball, fireball, colorball } = req.body;
-      
 
         const user = await userModel.findById(userId);
 
         // Store the original referral code
         const originalReferralCode = user.referralCode;
 
-        // Update user's fields
-        user.coins += coins || 0;
-        user.life += life || 0;
-        user.extraball += extraball || 0;
-        user.fireball += fireball || 0;
-        user.colorball += colorball || 0;
+        // Update user's fields ensuring non-negativity
+        user.coins += coins >= 0 ? coins : 0;
+        user.life += life >= 0 ? life : 0;
+        user.extraball += extraball >= 0 ? extraball : 0;
+        user.fireball += fireball >= 0 ? fireball : 0;
+        user.colorball += colorball >= 0 ? colorball : 0;
 
         // Save the user
         await user.save();
