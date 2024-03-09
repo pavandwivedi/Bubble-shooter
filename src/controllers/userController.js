@@ -164,7 +164,7 @@ export async function userUpdateController(req, res) {
 
         // Store the original referral code
         const originalReferralCode = user.referralCode;
-
+        const originalReferedCount = user.referedCount;
         // Update user's fields ensuring non-negativity
         user.coins += coins >= 0 ? coins : 0;
         user.life += life >= 0 ? life : 0;
@@ -182,6 +182,8 @@ export async function userUpdateController(req, res) {
 
         // Restore the original referral code
         user.referralCode = originalReferralCode;
+        user.referedCount = originalReferedCount;
+
 
         return res.send(success(200, user));
     } catch (err) {
