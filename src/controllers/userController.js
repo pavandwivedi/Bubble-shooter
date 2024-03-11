@@ -212,8 +212,9 @@ export async function referAndEarnController(req, res) {
         await referrer.save();
 
         referred.coins += 10;
+        referred.isReferUsed = true;
         await referred.save();
-
+        
         // Restore the original referral codes
         referrer.referralCode = originalReferralCodeReferrer;
         referrer.isReferred = true;
