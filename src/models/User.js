@@ -13,9 +13,9 @@ const commonSchema = new mongoose.Schema({
     life:{type:Number,default:5,min:0,max:5},
     coins:{type:Number,default:0},
     INR:{type:Number,default:0},
-    extraball:{type:Number,default:0},
-    fireball:{type:Number,default:0},
-    colorball:{type:Number,default:0},
+    extraball:{type:Number,default:0,min:0,max:3},
+    fireball:{type:Number,default:0,min:0,max:5},
+    colorball:{type:Number,default:0,min:0,max:5},
     Levels:[
         {
             type: mongoose.Schema.Types.ObjectId,
