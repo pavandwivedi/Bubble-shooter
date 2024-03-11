@@ -11,25 +11,25 @@ export async function guestLoginController(req, res) {
             return res.send(error(422, "insufficient data"));
         }
        
-        const  existingUser = await guestModel.findOne({ deviceID });
+        const existingUser = await guestModel.findOne({ deviceID });
        
-        if (!existingUser) {
-           
-            const referralCode = generateUniqueReferralCode();
-          
-            const newUser = await guestModel.create({deviceID,referralCode});
-            console.log(newUser);
-            const accessToken = generateAccessToken({ ...newUser })
-            return res.send(success(200,{accessToken, isNewUser: true}))
+        if (existingUser) {
+            // If the existing user is found, delete it
+            await guestModel.deleteOne({ deviceID });
         }
-
-        const accessToken = generateAccessToken({ ...existingUser });
-        return res.send(success(200, {accessToken, isNewUser: false}));
+       
+        const referralCode = generateUniqueReferralCode();
+          
+        const newUser = await guestModel.create({ deviceID, referralCode });
+        console.log(newUser);
+        const accessToken = generateAccessToken({ ...newUser })
+        return res.send(success(200, { accessToken, isNewUser: true }));
+        
     } catch (err) {
-      
         return res.send(error(500, err.message));
     }
 }
+
 export async function authenticLoginController(req, res) {
     try {
         const { email, deviceID ,name} = req.body;
