@@ -15,7 +15,7 @@ const commonSchema = new mongoose.Schema({
     },
     referedCount:{type:Number,default:0},
     life:{type:Number,default:5,min:0,max:5},
-    coins:{type:Number,default:0},
+    coins:{type:Number,default:0,min:0},
     INR:{type:Number,default:0},
     extraball:{type:Number,default:0,min:0,max:3},
     fireball:{type:Number,default:0,min:0,max:5},
