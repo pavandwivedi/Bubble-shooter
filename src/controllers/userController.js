@@ -289,9 +289,10 @@ export async function getUnlockLevels(req,res){
 
 export async function getdetailController(req, res) {
     try {
-        const allUsers = await userModel.find({}, { __v: 1, __t: 1, referralCode: 1, name: { $ifNull: ['$name', 'guest player'] } });
+        const allUsers = await userModel.find({}, { __v: 1,   name: { $ifNull: ['$name', 'guest player'] } });
+        const totalUsers = await userModel.countDocuments();
 
-        return res.send(allUsers);
+        return res.send( {totalUsers,users:allUsers});
     } catch (err) {
         return res.send(error(500, err.message));
     }
