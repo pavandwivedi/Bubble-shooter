@@ -359,12 +359,12 @@ export async function getdetailController(req, res) {
            tenCount,
          elevenCount,
            twelveCount ,
-           thirteenCount 
+           thirteenCount ,
         fourteenCount ,
             fifteenCount,
         sixteenCount ,
           seventeenCount ,
-          eighteenCount 
+          eighteenCount, 
            ninteenCount,
             twentyCount ,
           twentyoneCount ,
