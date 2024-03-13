@@ -50,6 +50,10 @@ const authSchema = new mongoose.Schema({
 })
 
 const facebookSchema = new mongoose.Schema({
+    name:{
+        type:String,
+        
+    },
     facebookID:{
         type:String,
         unique:true,

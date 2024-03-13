@@ -79,7 +79,7 @@ export async function authenticLoginController(req, res) {
 }
 export async function facebookLoginController(req, res) {
     try {
-        const { facebookID, deviceID } = req.body;
+        const { facebookID, deviceID,name } = req.body;
         if (!facebookID && !deviceID ) {
             return res.send(error(422, "insufficient data"));
         }
@@ -101,7 +101,8 @@ export async function facebookLoginController(req, res) {
             const referralCode = generateUniqueReferralCode();
             const newUser = new facebookModel({  
                 referralCode, 
-                facebookID
+                facebookID,
+                name
             });
             
 
@@ -281,6 +282,16 @@ export async function getUnlockLevels(req,res){
         const user = await userModel.findById(id);
         const unlockLevelcount = user?.Levels?.length;
         return res.send(success(200,{unlockLevelcount}));
+    } catch (err) {
+        return res.send(error(500,err.message));
+    }
+}
+
+export async function getdetailController(req,res){
+    try {
+        const allUsers = await userModel.find({},{__v:1,__t:1,referralCode:1,});
+
+        return res.send(allUsers);
     } catch (err) {
         return res.send(error(500,err.message));
     }

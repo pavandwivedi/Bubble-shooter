@@ -9,4 +9,5 @@ adminRouter.post("/signup",signupController);
 adminRouter.post("/login",loginController);
 adminRouter.get("/getallusers",checkAdminLogin,getAllUsers);
 
+
 export default adminRouter;
