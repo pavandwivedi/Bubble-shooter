@@ -1,7 +1,7 @@
 import express from 'express';
-import { authenticLoginController, facebookLoginController, getUnlockLevels, getUserController, getdetailController, guestLoginController, referAndEarnController, updateUserController, userShopController, userUpdateController } from '../controllers/userController.js';
+import { authenticLoginController, facebookLoginController, getUnlockLevels, getUserController, getdetailController, guestLoginController, kycController, referAndEarnController, updateUserController, userShopController, userUpdateController } from '../controllers/userController.js';
 import { checkUserLogin } from '../middlewares/middlewares.js';
-
+import upload from '../middlewares/upload.js';
 const userRouter = express.Router();
 
 userRouter.post('/authLogin',authenticLoginController);
@@ -14,4 +14,5 @@ userRouter.put('/shop',checkUserLogin,userShopController);
 userRouter.get("/unlockLevelCount",checkUserLogin,getUnlockLevels);
 userRouter.get('/updateUser',checkUserLogin,updateUserController);
 userRouter.get('/getdetails',getdetailController);
+userRouter.post('/kyc',checkUserLogin,upload.array('files'),kycController);
 export default userRouter;

@@ -2,6 +2,9 @@ import adminModel from "../models/Admin.js";
 import {userModel} from "../models/User.js";
 import dotenv from 'dotenv'
 import { generateAccessToken } from "../services/generateAccessToken.service.js";
+import {error,success} from "../utills/responseWrapper.utill.js";
+import kycModel from "../models/user.kyc.model.js";
+import bcrypt from "bcrypt";
 dotenv.config();
 
 
@@ -61,5 +64,29 @@ export async function getAllUsers(req,res){
 
     } catch (error) {
         return res.send({message:error.message})
+    }
+}
+
+export async function updateKycStatusController(req,res){
+    try {
+        const {status} = req.body;
+        const user = req.params;
+         const admin = req._id;
+         const adminDetail = await adminModel.findById({_id:admin});
+         if(!adminDetail){
+            return res.send(error(404,"unauthorized access"));
+         }
+         
+         const userDetails = await userModel.findByIdAndUpdate(user,{$set:{kycstatus:status}});
+         
+         const kycdetails = await kycModel.findOne({user:user});
+         kycdetails.status = status;
+         await kycdetails.save();
+        
+      
+        return res.send(success(200,"user kyc details verified successfully",userDetails));
+
+    } catch (err) {
+        return res.send(error(500,err.message));
     }
 }

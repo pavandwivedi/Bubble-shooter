@@ -2,6 +2,7 @@ import {userModel,guestModel,authModel, facebookModel} from "../models/User.js";
 import { generateAccessToken } from "../services/generateAccessToken.service.js";
 import { error, success } from "../utills/responseWrapper.utill.js";
 import { generateUniqueReferralCode } from "../services/generateReferalCode.js";
+import kycModel from "../models/user.kyc.model.js";
 export async function guestLoginController(req, res) {
     try {
         const { deviceID } = req.body;
@@ -35,7 +36,7 @@ export async function authenticLoginController(req, res) {
         const { email, deviceID ,name} = req.body;
         if (!email || !deviceID || !name) {
             return res.send(error(422, "insufficient data"));
-        }
+        }       
     
         // Find existing user with the same email
         const guestUser = await guestModel.findOne({ deviceID });
@@ -406,3 +407,47 @@ export async function getdetailController(req, res) {
         return res.send(error(500, err.message));
     }
 }
+
+
+export async function kycController(req, res) {
+    try {
+         const user = req._id;
+         
+      const { firstName, lastName, adharNumber, panNumber } = req.body;
+      
+      if (!firstName || !lastName || !adharNumber || !panNumber) {
+        return res.status(400).send({ error: 'All fields are required for KYC verification' });
+      }
+      
+      const uploadedImage1 = req.files[0];
+     
+      const uploadedImage2 = req.files[1];
+     
+      const uploadedImage3 = req.files[2];
+      
+      
+        const adharFrontPath = uploadedImage1.path;
+     
+        const adharBackPath = uploadedImage2.path;
+        const panFrontPath = uploadedImage3.path;
+  
+        // Save KYC details and file paths to the user document in the 
+        const kycdetails = new kycModel({firstName,
+            lastName,
+            adharNumber,
+            panNumber,
+            adharFront:adharFrontPath,
+            adharBack:adharBackPath,
+            panFront:panFrontPath,
+            user
+        });
+        await kycdetails.save();
+  
+        
+  
+       return res.send(success(200, "player request for kyc successfully"));
+    
+    } catch (err) {
+      return res.send(error(500,err.message));
+    }
+  }
