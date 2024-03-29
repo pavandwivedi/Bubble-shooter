@@ -90,3 +90,17 @@ export async function updateKycStatusController(req,res){
         return res.send(error(500,err.message));
     }
 }
+
+export async function getKycListController(req,res){
+    try {
+        const admin = req._id;
+         const adminDetail = await adminModel.findById({_id:admin});
+         if(!adminDetail){
+            return res.send(error(404,"unauthorized access"));
+         }
+        const kycList = await kycModel.find({});
+        return res.send(success(200, kycList,"kyc list fetch successfully"));
+    } catch (err) {
+        return res.send(error(500,err.message));
+    }
+}
