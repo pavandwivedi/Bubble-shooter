@@ -3,6 +3,7 @@ import { generateAccessToken } from "../services/generateAccessToken.service.js"
 import { error, success } from "../utills/responseWrapper.utill.js";
 import { generateUniqueReferralCode } from "../services/generateReferalCode.js";
 import kycModel from "../models/user.kyc.model.js";
+import WithdrawRequestModel from "../models/user.withdrawrequest.model.js";
 export async function guestLoginController(req, res) {
     try {
         const { deviceID } = req.body;
@@ -451,3 +452,30 @@ export async function kycController(req, res) {
       return res.send(error(500,err.message));
     }
   }
+
+
+  export async function withdrawRequestController(req,res){
+    try {
+        const { amt_withdraw,payment_type,upi_id,mobile_number,reason} = req.body;
+
+        if (!amt_withdraw || !payment_type || !upi_id || !mobile_number || !reason ) {
+            return res.send(error(403,"all fields are required"));
+        }
+         const user = req._id;
+         const userInfo = await userModel.findById(user);
+         if(!userInfo){
+            return res.send(error(404,"no such user exist"));
+         }
+
+         if(userInfo.INR < amt_withdraw){
+            return res.send(error(404,`you have only ${amt_withdraw} in your wallet , please play the challenge to increase INR`  ));
+         }
+         const newWithdrawRequest = new WithdrawRequestModel({amt_withdraw,payment_type,upi_id,mobile_number,reason,user});
+          await newWithdrawRequest.save();
+     return res.send(success(200,` request for ${amt_withdraw } rupees have  been sent successfully,please wait for 3-4 hours for payment processing `));
+
+    } catch (err) {
+        return res.send(error(500,err.message));
+    }
+  }
+  
