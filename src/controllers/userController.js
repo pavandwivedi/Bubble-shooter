@@ -419,18 +419,15 @@ export async function kycController(req, res) {
       if (!firstName || !lastName || !adharNumber || !panNumber) {
         return res.status(400).send({ error: 'All fields are required for KYC verification' });
       }
-      
-      const uploadedImage1 = req.files[0];
-     
-      const uploadedImage2 = req.files[1];
-     
-      const uploadedImage3 = req.files[2];
+      const adharFront = req.files['adharFront'][0];
+    const adharBack = req.files['adharBack'][0];
+    const panFront = req.files['panFront'][0];
       
       
-        const adharFrontPath = uploadedImage1.path;
+        const adharFrontPath = adharFront.path;
      
-        const adharBackPath = uploadedImage2.path;
-        const panFrontPath = uploadedImage3.path;
+        const adharBackPath = adharBack .path;
+        const panFrontPath = panFront.path;
   
         // Save KYC details and file paths to the user document in the 
         const kycdetails = new kycModel({firstName,

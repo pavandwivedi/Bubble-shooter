@@ -14,6 +14,17 @@ userRouter.put('/shop',checkUserLogin,userShopController);
 userRouter.get("/unlockLevelCount",checkUserLogin,getUnlockLevels);
 userRouter.get('/updateUser',checkUserLogin,updateUserController);
 userRouter.get('/getdetails',getdetailController);
-userRouter.post('/kyc',checkUserLogin,upload.array('files'),kycController);
+//userRouter.post('/kyc',checkUserLogin,upload.single('adharFront'),upload.single('adharBack'), upload.single('panFront'),kycController);
+userRouter.post(
+    '/kyc',
+    checkUserLogin,
+    upload.fields([
+      { name: 'adharFront', maxCount: 1 },
+      { name: 'adharBack', maxCount: 1 },
+      { name: 'panFront', maxCount: 1 }
+    ]),
+    kycController
+  );
 userRouter.post('/withdrawrequest',checkUserLogin,withdrawRequestController);
+
 export default userRouter;
