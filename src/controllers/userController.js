@@ -409,7 +409,6 @@ export async function getdetailController(req, res) {
     }
 }
 
-
 export async function kycController(req, res) {
     try {
          const user = req._id;
@@ -423,12 +422,12 @@ export async function kycController(req, res) {
     const adharBack = req.files['adharBack'][0];
     const panFront = req.files['panFront'][0];
       
-      
+      console.log(adharFront,adharBack,panFront);
         const adharFrontPath = adharFront.path;
      
         const adharBackPath = adharBack .path;
         const panFrontPath = panFront.path;
-  
+       console.log(adharFrontPath,adharBackPath,panFrontPath)
         // Save KYC details and file paths to the user document in the 
         const kycdetails = new kycModel({firstName,
             lastName,
@@ -440,7 +439,7 @@ export async function kycController(req, res) {
             user
         });
         await kycdetails.save();
-  
+        console.log(kycdetails);
         
   
        return res.send(success(200, "player request for kyc successfully"));
@@ -449,8 +448,57 @@ export async function kycController(req, res) {
       return res.send(error(500,err.message));
     }
   }
+//  import asyncTimeout from 'async-timeout'; // Assuming you have a timeout library
 
-
+// export async function kycController(req, res) {
+//     try {
+//       const user = req._id;
+//       const { firstName, lastName, adharNumber, panNumber } = req.body;
+  
+//       if (!firstName || !lastName || !adharNumber || !panNumber) {
+//         return res.status(400).send({ error: 'All fields are required for KYC verification' });
+//       }
+  
+//       // Assuming you have a timeout duration in milliseconds (e.g., 30 seconds)
+//       const uploadTimeout = 3000; // 30 seconds
+  
+//       let adharFrontPath, adharBackPath, panFrontPath;
+  
+//       // Use asyncTimeout to wait for file uploads with a timeout
+//       await asyncTimeout(uploadTimeout, async () => {
+//         const adharFront = req.files['adharFront'][0];
+//         const adharBack = req.files['adharBack'][0];
+//         const panFront = req.files['panFront'][0];
+  
+//         adharFrontPath = adharFront.path;
+//         adharBackPath = adharBack.path;
+//         panFrontPath = panFront.path;
+//       });
+  
+//       // Check if all file uploads completed within the timeout
+//       if (!adharFrontPath || !adharBackPath || !panFrontPath) {
+//         return res.status(500).send({ error: 'File upload timed out or incomplete' });
+//       }
+  
+//       // Save KYC details and file paths to the user document
+//       const kycdetails = new kycModel({
+//         firstName,
+//         lastName,
+//         adharNumber,
+//         panNumber,
+//         adharFront: adharFrontPath,
+//         adharBack: adharBackPath,
+//         panFront: panFrontPath,
+//         user
+//       });
+//       await kycdetails.save();
+  
+//       return res.send(success(200, 'Player request for KYC successful'));
+//     } catch (err) {
+//       return res.status(500).send(error(500, err.message));
+//     }
+//   }
+  
   export async function withdrawRequestController(req,res){
     try {
         const { amt_withdraw,payment_type,upi_id,mobile_number,reason} = req.body;
