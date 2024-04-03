@@ -593,12 +593,13 @@ const endpoint = 'contacts'
             const user = req._id;
           const contactDetail = await contactModel.findOne({user});
           const contact_id = contactDetail.contact_id;
-          const { vpa } = req.body;
-       
+          const requestData = req.body;
+          const vpa = requestData;
           // Validate request data
           const account_type = "vpa";
           
-          if (!account_type || !vpa ) {
+          
+          if (!account_type || !vpa) {
             return res.status(400).json({ error: 'Missing required fields' });
           }
       
@@ -643,7 +644,9 @@ const endpoint = 'contacts'
             const user = req._id;
           const contactDetail = await contactModel.findOne({user});
           const contact_id = contactDetail.contact_id;
-          const { bank_account } = req.body;
+         
+          const requestData = req.body;
+          const bank_account = requestData
       
           // Validate request data
           const account_type = "bank_account";
