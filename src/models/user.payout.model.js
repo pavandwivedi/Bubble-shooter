@@ -15,5 +15,5 @@ const payoutSchema = new mongoose.Schema({
         ref: 'user'
     }
 });
-const payoutModel = new mongoose.model('payout-detail',payoutSchema);
+const payoutModel = new mongoose.model('payoutdetail',payoutSchema);
 export default payoutModel;

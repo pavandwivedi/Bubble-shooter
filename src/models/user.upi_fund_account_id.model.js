@@ -11,5 +11,5 @@ user : {
 },
 {timestamps:true}
 );
-const upiFundModel = new mongoose.model("upi-fund-details",upiFundSchema);
+const upiFundModel = new mongoose.model("upifunddetails",upiFundSchema);
 export default upiFundModel;

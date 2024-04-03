@@ -11,5 +11,5 @@ user : {
 },
 {timestamps:true}
 );
-const bankFundModel = new mongoose.model("bank-fund-details",bankFundSchema);
+const bankFundModel = new mongoose.model("bankfunddetails",bankFundSchema);
 export default  bankFundModel;
