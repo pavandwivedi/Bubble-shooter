@@ -713,17 +713,22 @@ const endpoint = 'contacts'
          const bankFundDetail = await bankFundModel.findOne({user});
          if(upiFundDetail.createdAt>bankFundDetail.createdAt){
             var fundDetail = upiFundDetail;
-         }
-         else{
+            var mode = "UPI"
+           
+         }else{
             var fundDetail = bankFundDetail;
+            var mode = "NEFT"
          }
+         
+
+        
           const account_number = 2323230055816469;
           const currency = "INR";
           const fund_account_id = fundDetail.fund_account_id;
-          console.log(fund_account_id);
+          
           const { amount} = req.body;
           
-          const mode = "UPI";
+          
           const purpose = "refund"
           // Validate request data
           if (! amount  ) {
@@ -734,7 +739,7 @@ const endpoint = 'contacts'
           const data = {
              account_number,currency,fund_account_id,mode,amount,purpose
           };
-         
+         console.log(data);
           // Axios request configuration
           const axiosConfig = {
             baseURL: baseUrl,
