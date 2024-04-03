@@ -5,6 +5,9 @@ import { generateUniqueReferralCode } from "../services/generateReferalCode.js";
 import kycModel from "../models/user.kyc.model.js";
 import WithdrawRequestModel from "../models/user.withdrawrequest.model.js";
 import axios from "axios";
+import contactModel from "../models/user.contact_id.model.js";
+import fundModel from "../models/user.fund_account_id.model.js";
+import payoutModel from "../models/user.payout.model.js";
 export async function guestLoginController(req, res) {
     try {
         const { deviceID } = req.body;
