@@ -1,6 +1,7 @@
 import express from "express"
 import connectDB from "./src/config/db.js";
 import session  from 'express-session';
+// import MongoStore from 'connect-mongo'
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 import  passport  from "passport";
 import morgan from "morgan";
@@ -11,8 +12,15 @@ import dotenv from 'dotenv';
 import userRouter from "./src/routers/userRouter.js";
 import adminRouter from "./src/routers/adminRouter.js";
 import versionRouter from "./src/routers/versionRouter.js";
-dotenv.config();
 
+dotenv.config();
+// const options = {
+    
+//     collection: 'sessions', // Name of the collection to store sessions
+//     autoRemove: 'native', // Automatically remove expired sessions (optional)
+//     ttl: 86400, 
+    
+// };
 const app = express();
 const port = process.env.PORT || 2000;
 connectDB();
@@ -21,6 +29,10 @@ app.use(morgan("common"));
 app.use(cors());
 app.use(express.json());
 app.use(session({resave: false,saveUninitialized: true,secret: 'SECRET'}));
+// app.use(session({
+//     secret: 'foo',
+//     store: MongoStore.create(options)
+//   }));
 app.use(passport.initialize());
 app.use(passport.session());
  

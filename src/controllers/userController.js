@@ -412,6 +412,9 @@ export async function getdetailController(req, res) {
 export async function kycController(req, res) {
     try {
          const user = req._id;
+         if(!user){
+            return res.send(error(404,"user not found"));
+         }
          
       const { firstName, lastName, adharNumber, panNumber } = req.body;
       
@@ -523,4 +526,154 @@ export async function kycController(req, res) {
         return res.send(error(500,err.message));
     }
   }
+  export  async function createContactAccountController(req, res) {
+    const apiKey = 'rzp_test_HReBag7y9g12Bp';
+const apiSecret = 'DM6knlODsGtsJsTzEUbx64dA';
+
+// Base URL for Razorpay API
+const baseUrl = 'https://api.razorpay.com/v1/';
+
+// Endpoint for creating contacts
+const endpoint = 'contacts'
+    try {
+        const user = req._id;
+      const { name, email, contact } = req.body;
+      const type = "employee"
+      // Validate request data
+      if (!name || !email || !contact || !type) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
   
+      // Sample data for creating a contact
+      const data = {
+        name,
+        email,
+        contact,
+        type,
+        // Add other required fields as needed
+      };
+  
+      // Axios request configuration
+      const axiosConfig = {
+        baseURL: baseUrl,
+        headers: {
+          Authorization: `Basic ${Buffer.from(apiKey + ':' + apiSecret).toString('base64')}`,
+          'Content-Type': 'application/json',
+        },
+      };
+  
+      // Make POST request to create a contact
+      const response = await axios.post(endpoint, data, axiosConfig);
+      const contact_id = response.data.id;
+      const contactDetail = new contactModel({contact_id,user});
+      await contactDetail.save();
+      // Handle successful response
+      res.status(201).json({ message: 'Contact created successfully', data: response.data });
+    } catch (error) {
+      // Handle errors
+      console.error('Error creating contact:', error.response ? error.response.data : error.message);
+      res.status(error.response ? error.response.status : 500).json({ error: error.message });
+    }
+  }
+
+  export async function createFundAccountController(req,res){
+    const apiKey = 'rzp_test_HReBag7y9g12Bp';
+    const apiSecret = 'DM6knlODsGtsJsTzEUbx64dA';
+    
+    // Base URL for Razorpay API
+    const baseUrl = 'https://api.razorpay.com/v1/';
+    
+    // Endpoint for creating contacts
+    const endpoint = 'fund_accounts'
+        try {
+            const user = req._id;
+          const contactDetail = await contactModel.findOne({user});
+          const contact_id = contactDetail.contact_id;
+          const { account_type,vpa } = req.body;
+      
+          // Validate request data
+          if (!account_type || !vpa ) {
+            return res.status(400).json({ error: 'Missing required fields' });
+          }
+      
+          // Sample data for creating a contact
+          const data = {
+          contact_id,account_type,vpa
+          };
+      
+          // Axios request configuration
+          const axiosConfig = {
+            baseURL: baseUrl,
+            headers: {
+              Authorization: `Basic ${Buffer.from(apiKey + ':' + apiSecret).toString('base64')}`,
+              'Content-Type': 'application/json',
+            },
+          };
+      
+          // Make POST request to create a contact
+          const response = await axios.post(endpoint, data, axiosConfig);
+         const fund_account_id  = response.data.id;
+          const fundDetail = new fundModel({fund_account_id,user});
+          await fundDetail.save();
+          
+          res.status(201).json({ message: 'Contact created successfully', data: response.data });
+        } catch (error) {
+          // Handle errors
+          console.error('Error creating contact:', error.response ? error.response.data : error.message);
+          res.status(error.response ? error.response.status : 500).json({ error: error.message });
+        }
+  }
+
+  export async function createPayoutController(req,res){
+    const apiKey = 'rzp_test_HReBag7y9g12Bp';
+    const apiSecret = 'DM6knlODsGtsJsTzEUbx64dA';
+    
+    // Base URL for Razorpay API
+    const baseUrl = 'https://api.razorpay.com/v1/';
+    
+    // Endpoint for creating contacts
+    const endpoint = 'payouts'
+        try {
+            const user = req._id;
+          const fundDetail = await fundModel.findOne({user});
+          const account_number = 2323230055816469;
+          const currency = "INR";
+          const fund_account_id = fundDetail.fund_account_id;
+          console.log(fund_account_id);
+          const { amount} = req.body;
+          
+          const mode = "UPI";
+          const purpose = "refund"
+          // Validate request data
+          if (! amount  ) {
+            return res.status(400).json({ error: 'Missing required fields' });
+          }
+      
+          // Sample data for creating a contact
+          const data = {
+             account_number,currency,fund_account_id,mode,amount,purpose
+          };
+         
+          // Axios request configuration
+          const axiosConfig = {
+            baseURL: baseUrl,
+            headers: {
+              Authorization: `Basic ${Buffer.from(apiKey + ':' + apiSecret).toString('base64')}`,
+              'Content-Type': 'application/json',
+            },
+          };
+      
+          // Make POST request to create a contact
+           const response = await axios.post(endpoint, data, axiosConfig);
+         const payout_id = response.data.id;
+         const payoutDetail = new payoutModel({payout_id,amount,mode,user});
+         console.log(payoutDetail)
+         await payoutDetail.save();
+          
+          res.status(201).json({ message: 'Contact created successfully', data: response.data });
+        } catch (error) {
+          // Handle errors
+          console.error('Error creating contact:', error.response ? error.response.data : error.message);
+          res.status(error.response ? error.response.status : 500).json({ error: error.message });
+        }
+  }
