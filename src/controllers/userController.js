@@ -4,6 +4,7 @@ import { error, success } from "../utills/responseWrapper.utill.js";
 import { generateUniqueReferralCode } from "../services/generateReferalCode.js";
 import kycModel from "../models/user.kyc.model.js";
 import WithdrawRequestModel from "../models/user.withdrawrequest.model.js";
+import axios from "axios";
 export async function guestLoginController(req, res) {
     try {
         const { deviceID } = req.body;
