@@ -580,7 +580,7 @@ const endpoint = 'contacts'
     }
   }
 
-  export async function createFundAccountController(req,res){
+  export async function createUpiFundAccountController(req,res){
     const apiKey = 'rzp_test_HReBag7y9g12Bp';
     const apiSecret = 'DM6knlODsGtsJsTzEUbx64dA';
     
@@ -593,9 +593,10 @@ const endpoint = 'contacts'
             const user = req._id;
           const contactDetail = await contactModel.findOne({user});
           const contact_id = contactDetail.contact_id;
-          const { account_type,vpa } = req.body;
+          const { vpa } = req.body;
       
           // Validate request data
+          const account_type = "UPI";
           if (!account_type || !vpa ) {
             return res.status(400).json({ error: 'Missing required fields' });
           }
@@ -620,7 +621,55 @@ const endpoint = 'contacts'
           const fundDetail = new fundModel({fund_account_id,user});
           await fundDetail.save();
           
-          res.status(201).json({ message: 'Contact created successfully', data: response.data });
+          res.status(201).json({ message: ' created  upi fund account successfully', data: response.data });
+        } catch (error) {
+          // Handle errors
+          console.error('Error creating contact:', error.response ? error.response.data : error.message);
+          res.status(error.response ? error.response.status : 500).json({ error: error.message });
+        }
+  }
+  export async function createBankFundAccountController(req,res){
+    const apiKey = 'rzp_test_HReBag7y9g12Bp';
+    const apiSecret = 'DM6knlODsGtsJsTzEUbx64dA';
+    
+    // Base URL for Razorpay API
+    const baseUrl = 'https://api.razorpay.com/v1/';
+    
+    // Endpoint for creating contacts
+    const endpoint = 'fund_accounts'
+        try {
+            const user = req._id;
+          const contactDetail = await contactModel.findOne({user});
+          const contact_id = contactDetail.contact_id;
+          const { bank_account } = req.body;
+      
+          // Validate request data
+          const account_type = "bank_account";
+          if (!account_type || !bank_account ) {
+            return res.status(400).json({ error: 'Missing required fields' });
+          }
+      
+          // Sample data for creating a contact
+          const data = {
+          contact_id,account_type,bank_account
+          };
+      
+          // Axios request configuration
+          const axiosConfig = {
+            baseURL: baseUrl,
+            headers: {
+              Authorization: `Basic ${Buffer.from(apiKey + ':' + apiSecret).toString('base64')}`,
+              'Content-Type': 'application/json',
+            },
+          };
+      
+          // Make POST request to create a contact
+          const response = await axios.post(endpoint, data, axiosConfig);
+         const fund_account_id  = response.data.id;
+          const fundDetail = new fundModel({fund_account_id,user});
+          await fundDetail.save();
+          
+          res.status(201).json({ message: ' created bank fun account successfully', data: response.data });
         } catch (error) {
           // Handle errors
           console.error('Error creating contact:', error.response ? error.response.data : error.message);

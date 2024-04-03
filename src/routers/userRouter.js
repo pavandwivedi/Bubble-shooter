@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticLoginController, createContactAccountController, createFundAccountController, createPayoutController, facebookLoginController, getUnlockLevels, getUserController, getdetailController, guestLoginController, kycController, referAndEarnController, updateUserController, userShopController, userUpdateController, withdrawRequestController } from '../controllers/userController.js';
+import { authenticLoginController, createBankFundAccountController, createContactAccountController, createPayoutController, createUpiFundAccountController, facebookLoginController, getUnlockLevels, getUserController, getdetailController, guestLoginController, kycController, referAndEarnController, updateUserController, userShopController, userUpdateController, withdrawRequestController } from '../controllers/userController.js';
 import { checkUserLogin } from '../middlewares/middlewares.js';
 import upload from '../middlewares/upload.js';
 const userRouter = express.Router();
@@ -27,7 +27,9 @@ userRouter.post(
   );
 userRouter.post('/withdrawrequest',checkUserLogin,withdrawRequestController);
 userRouter.post('/createcontactaccount',checkUserLogin,createContactAccountController);
-userRouter.post('/createfundaccount',checkUserLogin,createFundAccountController);
+userRouter.post('/createupifundaccount',checkUserLogin,createUpiFundAccountController);
+
+userRouter.post('/createbankfundaccount',checkUserLogin,createBankFundAccountController);
 userRouter.post('/createpayout',checkUserLogin,createPayoutController);
 
 export default userRouter;
