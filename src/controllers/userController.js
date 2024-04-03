@@ -6,7 +6,8 @@ import kycModel from "../models/user.kyc.model.js";
 import WithdrawRequestModel from "../models/user.withdrawrequest.model.js";
 import axios from "axios";
 import contactModel from "../models/user.contact_id.model.js";
-import fundModel from "../models/user.fund_account_id.model.js";
+import upiFundModel from "../models/user.upi_fund_account_id.model.js";
+import bankFundModel from "../models/user.bank_fund_account_id.model.js";
 import payoutModel from "../models/user.payout.model.js";
 export async function guestLoginController(req, res) {
     try {
@@ -547,7 +548,10 @@ const endpoint = 'contacts'
       if (!name || !email || !contact || !type) {
         return res.status(400).json({ error: 'Missing required fields' });
       }
-  
+      const existingContact = await contactModel.findOne({user});
+      if(existingContact){
+        await contactModel.findByIdAndDelete(existingContact._id);
+      }
       // Sample data for creating a contact
       const data = {
         name,
@@ -602,7 +606,10 @@ const endpoint = 'contacts'
           if (!account_type || !vpa) {
             return res.status(400).json({ error: 'Missing required fields' });
           }
-      
+          const existingFundAccount = await upiFundModel.findOne({user});
+          if(existingFundAccount){
+            await upiFundModel.findByIdAndDelete(existingFundAccount._id);
+          }
           // Sample data for creating a contact
           const data = {
           contact_id,account_type,vpa
@@ -621,7 +628,7 @@ const endpoint = 'contacts'
           const response = await axios.post(endpoint, data, axiosConfig);
           
          const fund_account_id  = response.data.id;
-          const fundDetail = new fundModel({fund_account_id,user});
+          const fundDetail = new upiFundModel({fund_account_id,user});
           await fundDetail.save();
           
           res.status(201).json({ message: ' created  upi fund account successfully', data: response.data });
@@ -653,7 +660,10 @@ const endpoint = 'contacts'
           if (!account_type || !bank_account ) {
             return res.status(400).json({ error: 'Missing required fields' });
           }
-      
+          const existingFundAccount = await bankFundModel.findOne({user});
+          if(existingFundAccount){
+            await bankFundModel.findByIdAndDelete(existingFundAccount._id);
+          }
           // Sample data for creating a contact
           const data = {
           contact_id,account_type,bank_account
@@ -671,7 +681,7 @@ const endpoint = 'contacts'
           // Make POST request to create a contact
           const response = await axios.post(endpoint, data, axiosConfig);
          const fund_account_id  = response.data.id;
-          const fundDetail = new fundModel({fund_account_id,user});
+          const fundDetail = new bankFundModel({fund_account_id,user});
           await fundDetail.save();
           
           res.status(201).json({ message: ' created bank fun account successfully', data: response.data });
@@ -693,7 +703,20 @@ const endpoint = 'contacts'
     const endpoint = 'payouts'
         try {
             const user = req._id;
-          const fundDetail = await fundModel.findOne({user});
+            // const type = req.body;
+            // if(type =="upi"){
+            //   var fundDetail = await upiFundModel.findOne({user});
+            // }else{
+            //     var fundDetail = await bankFundModel.findOne({user});
+            // }
+         const upiFundDetail = await upiFundModel.findOne({user});
+         const bankFundDetail = await bankFundModel.findOne({user});
+         if(upiFundDetail.createdAt>bankFundDetail.createdAt){
+            var fundDetail = upiFundDetail;
+         }
+         else{
+            var fundDetail = bankFundDetail;
+         }
           const account_number = 2323230055816469;
           const currency = "INR";
           const fund_account_id = fundDetail.fund_account_id;
