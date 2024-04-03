@@ -594,9 +594,10 @@ const endpoint = 'contacts'
           const contactDetail = await contactModel.findOne({user});
           const contact_id = contactDetail.contact_id;
           const { vpa } = req.body;
-      
+       
           // Validate request data
-          const account_type = "UPI";
+          const account_type = "vpa";
+          
           if (!account_type || !vpa ) {
             return res.status(400).json({ error: 'Missing required fields' });
           }
@@ -605,7 +606,7 @@ const endpoint = 'contacts'
           const data = {
           contact_id,account_type,vpa
           };
-      
+       
           // Axios request configuration
           const axiosConfig = {
             baseURL: baseUrl,
@@ -617,6 +618,7 @@ const endpoint = 'contacts'
       
           // Make POST request to create a contact
           const response = await axios.post(endpoint, data, axiosConfig);
+          
          const fund_account_id  = response.data.id;
           const fundDetail = new fundModel({fund_account_id,user});
           await fundDetail.save();
