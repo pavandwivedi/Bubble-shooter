@@ -29,8 +29,8 @@ const kycSchema = new mongoose.Schema({
     },
  
     status:{
-        type:Boolean,
-        default:false
+        type:Number,
+        default:0
     },
     user : {
         type: mongoose.Schema.Types.ObjectId,
