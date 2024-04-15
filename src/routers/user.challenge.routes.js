@@ -7,3 +7,5 @@ const  challengeRouter = express.Router()
 challengeRouter.post('/insertChallenge',checkUserLogin,insertChallengeController)
 challengeRouter.get('/getChallenge',checkUserLogin,getAllChallengeController)
 challengeRouter.put('/updateChallenge', checkUserLogin,updateChallengeController)
+
+export default challengeRouter

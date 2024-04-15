@@ -12,6 +12,7 @@ import dotenv from 'dotenv';
 import userRouter from "./src/routers/userRouter.js";
 import adminRouter from "./src/routers/adminRouter.js";
 import versionRouter from "./src/routers/versionRouter.js";
+import challengeRouter from "./src/routers/user.challenge.routes.js";
 
 dotenv.config();
 // const options = {
@@ -64,7 +65,7 @@ app.use('/level',levelRouter);
 app.use('/user',userRouter);
 app.use('/admin',adminRouter);
 app.use('/version',versionRouter);
-
+app.use('/challenge',challengeRouter);
 app.listen(port,()=>
     {
         console.log(`server running on port ${port}`);
