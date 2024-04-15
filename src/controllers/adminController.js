@@ -4,7 +4,6 @@ import dotenv from 'dotenv'
 import { generateAccessToken } from "../services/generateAccessToken.service.js";
 import {error,success} from "../utills/responseWrapper.utill.js";
 import kycModel from "../models/user.kyc.model.js";
-import createChallengeModel from "../models/admin.challenge.js"
 import bcrypt from "bcrypt";
 dotenv.config();
 
