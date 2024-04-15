@@ -1,6 +1,7 @@
 import express from 'express';
 import { checkUserLogin } from '../middlewares/middlewares.js';
-import {insertChallengeController,getAllChallengeController,updateChallengeController} from './controllers/challenge.controller.js'
+
+import { getAllChallengeController, insertChallengeController, updateChallengeController } from '../controllers/challenge.controller.js';
 
 const  challengeRouter = express.Router()
 
