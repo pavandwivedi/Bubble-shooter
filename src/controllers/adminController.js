@@ -72,7 +72,7 @@ export async function createChallengeController(req,res){
     const {name,description,isActive,rewards,duration,challengetype,taskamount} = req.body
     try{
    if(!name || !description || !rewards || !duration || !challengetype || !taskamount){
-        return res.send(error(404,"Insufficient Data"))
+        return res.send(404,"Insufficient Data")
     }
 
     const newChallenge = new createChallengeModel ({
@@ -89,7 +89,7 @@ export async function createChallengeController(req,res){
 
     return res.send(success(200,savedChallenge,"challenge created successfully",savedChallenge))
 }catch (error){
-    return res.send(error(500,error.message))
+    return res.send(500,error.message)
 }
 }
 
@@ -99,11 +99,11 @@ export async function getChallengeController(req,res){
         const challengeDetails = await createChallengeModel.find({})
 
         if(!challengeDetails){
-            return res.send(error(404,"challenge not found"))
+            return res.send(404,"challenge not found")
         }
         return res.send(success(200,challengeDetails,"challenge fetched successfully",challengeDetails))
     }catch(error){
-        return res.send(error(500,error.message))
+        return res.send(500,error.message)
     }
 }
 
@@ -115,7 +115,7 @@ export async function updateChallengeController(req,res){
       const existingChallenge = await createChallengeModel.findById(id)
 
       if(!existingChallenge){
-        return res.send(error(404,error.message))
+        return res.send(404,error.message)
       }
       if(name){
         existingChallenge.name = name;
@@ -143,7 +143,7 @@ export async function updateChallengeController(req,res){
 
       return res.send(success(200,updatedChallenge,"challenge updated successfully",updatedChallenge))
     }catch(error){
-        return res.send(error(500,err.message))
+        return res.send(500,err.message)
     }
 }
 
@@ -153,7 +153,7 @@ export async function deleteChallengeController(req,res){
         await createChallengeModel.findByIdAndUpdate(id)
         return res.send(success(200,"challenge deleted successfully"))
     }catch(err){
-        return res.send(error(500,err.message))
+        return res.send(500,err.message)
     }
 
 }
@@ -179,7 +179,7 @@ export async function updateKycStatusController(req,res){
         return res.send(success(200,"user kyc details verified successfully",userDetails));
 
     } catch (err) {
-        return res.send(error(500,err.message));
+        return res.send(500,err.message);
     }
 }
 
@@ -188,11 +188,11 @@ export async function getKycListController(req,res){
         const admin = req._id;
          const adminDetail = await adminModel.findById({_id:admin});
          if(!adminDetail){
-            return res.send(error(404,"unauthorized access"));
+            return res.send(404,"unauthorized access");
          }
         const kycList = await kycModel.find({});
         return res.send(success(200, kycList,"kyc list fetch successfully"));
     } catch (err) {
-        return res.send(error(500,err.message));
+        return res.send(500,err.message);
     }
 }
