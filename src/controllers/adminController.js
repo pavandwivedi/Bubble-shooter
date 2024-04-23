@@ -72,7 +72,7 @@ export async function createChallengeController(req,res){
     const {name,description,isActive,rewards,duration,challengetype,taskamount} = req.body
     try{
    if(!name || !description || !rewards || !duration || !challengetype || !taskamount){
-        return res.status(404).send({message:"Insufficient Data"})
+        return res.status(400).send({message:"Insufficient Data"})
     }
 
     const newChallenge = new createChallengeModel ({
@@ -89,6 +89,7 @@ export async function createChallengeController(req,res){
 
     return res.send(success(200,savedChallenge,"challenge created successfully",savedChallenge))
 }catch (error){
+    console.error("Error",error)
     return res.status(500).send({message:"Internal Server Error",})
 }
 }
