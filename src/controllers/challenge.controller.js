@@ -19,11 +19,11 @@ export async function insertChallengeController(req,res){
         } 
      const challengeDetails = await createChallengeModel.findOne({ name });
         if (!challengeDetails) {
-          return res.send(error(404, 'Challenge not found'));
+          return res.send(404, 'Challenge not found');
         }
     
         if (!challengeDetails.isActive) {
-          return res.send(error(400, 'Challenge is not active'));
+          return res.send(400, 'Challenge is not active');
         }
         const now = new Date(); // Current UTC date
       const utcOffset = 5.5 * 60 * 60 * 1000; // Indian Standard Time (IST) offset in milliseconds (UTC+5:30)
@@ -54,7 +54,7 @@ export async function insertChallengeController(req,res){
       };
         return res.send(success(200, "Challenge started successfully",response));
       } catch (err) {
-        return res.send(error(500, err.message));
+        return res.send(500, err.message);
       }
     }
 
@@ -82,7 +82,7 @@ export async function updateChallengeController(req,res){
     }
     const challengeDelete = await challengemodel.findOneAndDelete({name,user});
           if(!challengeDelete){
-            return res.send(error(404,"No challenge have been played by you"));
+            return res.send(404,"No challenge have been played by you");
           }
     challengeInfo.status = status
     await challengeInfo.save()
@@ -98,7 +98,7 @@ export async function getAllChallengeController(req,res){
         const user =req._id;
         const currUser = await userModel.findById(user)
         if (!currUser){
-            return res.send(error(404,'User Does Not Exist'));
+            return res.send(404,'User Does Not Exist');
         }
         const completedChallenges = await challengemodel.find({user})
 
@@ -107,7 +107,7 @@ export async function getAllChallengeController(req,res){
         const allChallenges = [...completedChallenges,...ongoingChallenges]
 
       if(allChallenges.length === 0) {
-        return res.send(error(404,"no challenge have been played by you"));
+        return res.send(404,"no challenge have been played by you");
       }
       console.log(allChallenges)
       
@@ -129,7 +129,7 @@ export async function getAllChallengeController(req,res){
        
 
     } catch (err) {
-        return res.send(error(500,err.message));
+        return res.send(500,err.message);
     }
 }
 
