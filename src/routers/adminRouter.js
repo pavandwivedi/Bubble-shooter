@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllUsers, getKycListController, loginController, signupController, updateKycStatusController ,createChallengeController,updateChallengeController,deleteChallengeController} from "../controllers/adminController.js";
+import { getAllUsers, getKycListController, loginController, signupController, updateKycStatusController ,createChallengeController ,getChallengeController,updateChallengeController,deleteChallengeController} from "../controllers/adminController.js";
 import { checkAdminLogin } from "../middlewares/middlewares.js";
 
 const adminRouter = express.Router();
@@ -12,6 +12,7 @@ adminRouter.put('/updatekycstatus/:_id',checkAdminLogin,updateKycStatusControlle
 adminRouter.get('/getkyclist',checkAdminLogin,getKycListController);
 adminRouter.post('/createChallenge',checkAdminLogin,createChallengeController);
 adminRouter.put('/updateChallenge/:id',checkAdminLogin,updateChallengeController);
+adminRouter.get('/getallChallenge',checkAdminLogin,getChallengeController);
 adminRouter.delete('/deleteChallenge/:id',checkAdminLogin,deleteChallengeController);
 
 export default adminRouter;
