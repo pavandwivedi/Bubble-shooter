@@ -88,9 +88,9 @@ export async function createChallengeController(req,res){
     const savedChallenge = await newChallenge.save()
 
     return res.send(success(200,savedChallenge,"challenge created successfully",savedChallenge))
-}catch (error){
-    console.error("Error",error)
-    return res.status(500).send({message:"Internal Server Error",})
+}catch (err){
+    
+    return res.send(error(500,err.message));
 }
 }
 
