@@ -404,10 +404,7 @@ export async function getdetailController(req, res) {
             fourtyeightCount ,
             fourtynineCount, 
            fiftyCount 
-           
-         
-        
-        
+          
         });
     } catch (err) {
         return res.send(error(500, err.message));
@@ -422,7 +419,7 @@ export async function kycController(req, res) {
          }
          
       const { firstName, lastName, adharNumber, panNumber } = req.body;
-      
+     
       if (!firstName || !lastName || !adharNumber || !panNumber) {
         return res.status(400).send({ error: 'All fields are required for KYC verification' });
       }
