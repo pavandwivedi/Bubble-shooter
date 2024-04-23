@@ -166,7 +166,7 @@ export async function updateKycStatusController(req,res){
          const admin = req._id;
          const adminDetail = await adminModel.findById({_id:admin});
          if(!adminDetail){
-            return res.send(error(404,"unauthorized access"));
+            return res.send(404,"unauthorized access");
          }
          
          const userDetails = await userModel.findByIdAndUpdate(user,{$set:{kycstatus:status}});
