@@ -2,6 +2,7 @@ import express from 'express';
 import { authenticLoginController, createBankFundAccountController, createContactAccountController, createPayoutController, createUpiFundAccountController, facebookLoginController, getUnlockLevels, getUserController, getdetailController, guestLoginController, kycController, referAndEarnController, updateUserController, userShopController, userUpdateController, withdrawRequestController } from '../controllers/userController.js';
 import { checkUserLogin } from '../middlewares/middlewares.js';
 import upload from '../middlewares/upload.js';
+import {getChallengeController} from "../controllers/adminController.js";
 const userRouter = express.Router();
 
 userRouter.post('/authLogin',authenticLoginController);
@@ -28,7 +29,7 @@ userRouter.post(
 userRouter.post('/withdrawrequest',checkUserLogin,withdrawRequestController);
 userRouter.post('/createcontactaccount',checkUserLogin,createContactAccountController);
 userRouter.post('/createupifundaccount',checkUserLogin,createUpiFundAccountController);
-
+userRouter.get('/getallChallenge',checkUserLogin,getChallengeController);
 userRouter.post('/createbankfundaccount',checkUserLogin,createBankFundAccountController);
 userRouter.post('/createpayout',checkUserLogin,createPayoutController);
 

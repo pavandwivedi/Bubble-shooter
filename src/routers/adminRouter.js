@@ -12,7 +12,7 @@ adminRouter.put('/updatekycstatus/:_id',checkAdminLogin,updateKycStatusControlle
 adminRouter.get('/getkyclist',checkAdminLogin,getKycListController);
 adminRouter.post('/createChallenge',checkAdminLogin,createChallengeController);
 adminRouter.put('/updateChallenge/:id',checkAdminLogin,updateChallengeController);
-adminRouter.get('/getallChallenge',checkAdminLogin,getChallengeController);
+adminRouter.get('/getallChallenge',getChallengeController);
 adminRouter.delete('/deleteChallenge/:id',checkAdminLogin,deleteChallengeController);
 
 export default adminRouter;
