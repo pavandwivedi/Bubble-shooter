@@ -6,6 +6,7 @@ import {error,success} from "../utills/responseWrapper.utill.js";
 import kycModel from "../models/user.kyc.model.js";
 import bcrypt from "bcrypt";
 import createChallengeModel from '../models/admin.challenge.js'
+import {generateUniqueReferenceId } from '../services/generateRefrenceid.js';
 dotenv.config();
 
 
@@ -74,8 +75,10 @@ export async function createChallengeController(req,res){
    if(!name || !description || !rewards || !duration || !challengetype || !taskamount){
         return res.status(400).send({message:"Insufficient Data"})
     }
+    const referenceId = generateUniqueReferenceId()
 
     const newChallenge = new createChallengeModel ({
+        referenceId,
         name, 
         description,
         isActive:isActive || true,

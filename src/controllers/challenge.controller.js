@@ -2,6 +2,7 @@ import createChallengeModel from "../models/admin.challenge.js";
 import challengemodel from "../models/user.challenge.model.js";
 import { userModel } from "../models/User.js";
 import { success,error } from "../utills/responseWrapper.utill.js";
+import CompletedChallenge from "../models/completedChallenge.js";
 
 export async function insertChallengeController(req,res){
     try{
@@ -33,15 +34,23 @@ export async function insertChallengeController(req,res){
       const startTime = istTime;
       const endTime = new Date(startTime.getTime() + challengeDetails.duration);
     
-        const challengeInfo = new challengemodel({ user,startTime: startTime, endTime, name,
-          taskamount:challengeDetails.taskamount,duration:challengeDetails.duration,status:"incomplete" });
+        const challengeInfo = new challengemodel({ 
+          user,
+          startTime: startTime, 
+          endTime, 
+          name,
+          taskamount:challengeDetails.taskamount,
+          duration:challengeDetails.duration,
+          status:"incomplete",
+          referenceId: challengeDetails.referenceId
+         });
         const createchallenges = await challengeInfo.save();
     
         if(!currUser.challenges){
                    currUser.challenges = []
                   }
     
-        currUser.challenges.push(createchallenges._id);
+        currUser.challenges.push({challengeId:createchallenges._id,referenceId:challengeDetails.referenceId});
         await currUser.save(); 
         const response = {
           _id: createchallenges._id,
@@ -51,6 +60,7 @@ export async function insertChallengeController(req,res){
           user: createchallenges.user,
           taskamount : createchallenges.taskamount,
           duration: createchallenges.duration,
+          referenceId: challengeDetails.referenceId
       };
         return res.send(success(200, "Challenge started successfully",response));
       } catch (err) {
@@ -69,23 +79,44 @@ export async function updateChallengeController(req,res){
         }
         const challengeDetails = await createChallengeModel.findOne({name})
         console.log(challengeDetails)
-        const challengeInfo = await challengemodel.findOne({name})
-        
-        
-    if (status === "complete"){
+        const challengeInfo = await challengemodel.findOne({name,user})
+        if(!challengeInfo){
+          return res.send(error(404,"No challenge found"))
+        }
+        const existingChallenge = await challengemodel.findOne({name,user});
+        if (!existingChallenge) {
+          return res.send(error(400, "No Challenge Found for this user exists"));
+        }
+
+    if (status === "complete" && challengeInfo.status !== 'complete'){
         
         currUser.INR += challengeDetails.rewards
-    }
+    
         if(currUser.challenges){
-        currUser.challenges = currUser.challenges.filter(challengeId => challengeId.toString() !==challengeInfo._id.toString())
+        // currUser.challenges = currUser.challenges.filter(challengeId => challengeId.toString() !==challengeInfo._id.toString())
         await currUser.save()
     }
-    const challengeDelete = await challengemodel.findOneAndDelete({name,user});
-          if(!challengeDelete){
-            return res.send(404,"No challenge have been played by you");
-          }
-    challengeInfo.status = status
-    await challengeInfo.save()
+    // const challengeDelete = await challengemodel.findOneAndDelete({name,user});
+    //       if(!challengeDelete){
+    //         return res.send(404,"No challenge have been played by you");
+    //       }
+
+    const completedChallenge = new CompletedChallenge({
+      user : user,
+      challenge:challengeInfo._id,
+      status:status,
+      referenceId:challengeInfo.referenceId
+    })
+    console.log(completedChallenge)
+
+    await completedChallenge.save()
+  }
+    existingChallenge.status = status
+    await existingChallenge.save();
+
+    await challengemodel.findOneAndDelete({name,user})
+    
+   
     return res.send(success(200,"Challenge Completed successfully"))
     }catch(error){
         return res.send(500,error.message)

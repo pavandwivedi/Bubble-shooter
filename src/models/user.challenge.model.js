@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 const challengeSchema = mongoose.Schema({
-
+    referenceId: {
+        type: String,
+        unique: true, 
+        required: true
+      },
     name:{
         type: String,
         required:true
