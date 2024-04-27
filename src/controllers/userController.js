@@ -760,3 +760,27 @@ const endpoint = 'contacts'
           res.status(error.response ? error.response.status : 500).json({ error: error.message });
         }
   }
+
+  export async function updateInrController(req,res){
+    try{
+        const userID = req._id;
+        const {referenceId,inrIncrease} = req.body;
+
+        if( !referenceId || !inrIncrease){
+            return res.send(error(400," Fill all the details"));
+        }  
+        const user = await userModel.findById(userID);
+        if(!user){
+            return res.send(error(404,"user not found"));
+        }
+        
+    user.INR += inrIncrease;
+    await user.save();
+
+    return res.send(success(200,{message:"INR updated Sucessfully"}));
+    } catch (err) {
+        return res.send(error(500,err.message));
+    
+   }
+
+}
