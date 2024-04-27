@@ -39,6 +39,7 @@ export async function insertChallengeController(req,res){
           startTime: startTime, 
           endTime, 
           name,
+          rewards: challengeDetails.rewards,
           taskamount:challengeDetails.taskamount,
           duration:challengeDetails.duration,
           status:"incomplete",
@@ -58,6 +59,7 @@ export async function insertChallengeController(req,res){
           startTime: createchallenges.startTime,
           status: createchallenges.status,
           user: createchallenges.user,
+          rewards: createchallenges.rewards,
           taskamount : createchallenges.taskamount,
           duration: createchallenges.duration,
           referenceId: challengeDetails.referenceId
@@ -149,6 +151,8 @@ export async function getAllChallengeController(req,res){
               startTime: challenges.startTime,
               remainingTime: challenges.remainingTime,
               status: challenges.status,
+              rewards: challenges.rewards,
+            challengetype: challenges.challengetype,
               duration: challenges.duration,
               taskamount: challenges.taskamount,
           };
@@ -164,4 +168,17 @@ export async function getAllChallengeController(req,res){
     }
 }
 
-       
+export async function getCompletedChallengesController(req,res){
+  try {
+    const user = req._id
+
+    const completedchallenges = await CompletedChallenge.find({user,status:'complete'}).populate('challenge')
+
+    if(completedchallenges.length ===0){
+      return res.send(error(404,'No Completed Challenges Found',[]))
+    }
+    return res.send(success(200,'Completed Challenges',completedchallenges))
+  }catch (err){
+    return res.send(error(500,err.message));
+  }
+}

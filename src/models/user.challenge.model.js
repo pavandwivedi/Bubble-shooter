@@ -26,6 +26,9 @@ const challengeSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
     },
+    rewards:{
+        type: Number
+    },
     taskamount:{
         type:Number,
         default:0
